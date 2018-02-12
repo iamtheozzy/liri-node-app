@@ -46,13 +46,15 @@ if (commands === "my-tweets") {
 // Controls spotify request from user
 if (commands === "spotify-this-song") {
 
-  // stores song name
-  // var songTitle = process.argv[3] ? process.argv[3] : "'The Sign' by Ace of Base";
+
 
   var output = "";
   for (var i = 3; i < process.argv.length; i++) {
-    output = process.argv[i] + "";
-  }
+    output += process.argv[i] + " ";
+  };
+
+  // stores song name
+  var songTitle = output ? output : "'The Sign' by Ace of Base";
 
   console.log(output)
 
@@ -61,7 +63,7 @@ if (commands === "spotify-this-song") {
 
   spotify.search({
     type: 'track',
-    query: output
+    query: songTitle
   }, function(err, data) {
       if (err) {
         return console.log('Error occurred: ' + err);
