@@ -11,11 +11,8 @@ var request = require("request");
 var node = process.argv;
 var commands = node[2];
 
-
-// Controls Twitter request from user
-if (commands === "my-tweets") {
-
-  // request auth keys
+// Function for "my-tweets"
+var my_tweets = function() {
   var client = new Twitter(keys.twitter);
 
   // Sets what account we are looking into
@@ -27,7 +24,7 @@ if (commands === "my-tweets") {
   client.get('statuses/user_timeline', params, function(error, tweets, response) {
 
     if (!error) {
-      for (var i = 0; i < tweets.length; i++){
+      for (var i = 0; i < tweets.length; i++) {
 
         var name = tweets[i].user.screen_name;
         var text = tweets[i].text;
@@ -40,14 +37,10 @@ if (commands === "my-tweets") {
 
     };
   });
-
 };
 
-
-// Controls spotify request from user
-if (commands === "spotify-this-song") {
-
-
+// Function for "spotify-this-song"
+var spotify = function() {
   var output = "";
   for (var i = 3; i < process.argv.length; i++) {
     output += process.argv[i] + " ";
@@ -65,46 +58,46 @@ if (commands === "spotify-this-song") {
     type: 'track',
     query: songTitle
   }, function(err, data) {
-      if (err) {
-        return console.log('Error occurred: ' + err);
-      }
-      // stores larger object from Spotify
-      var songInfo = data.tracks.items;
-      // loops through object
-      for (var i = 0; i < songInfo.length; i++) {
+    if (err) {
+      return console.log('Error occurred: ' + err);
+    }
+    // stores larger object from Spotify
+    var songInfo = data.tracks.items;
+    // loops through object
+    for (var i = 0; i < songInfo.length; i++) {
 
-        var albumName = songInfo[i].album.name;
-        var artistName = songInfo[i].artists[0].name;
-        var preview = songInfo[i].preview_url;
-        var songName = songInfo[i].name;
-        // console.log(songInfo);
+      var albumName = songInfo[i].album.name;
+      var artistName = songInfo[i].artists[0].name;
+      var preview = songInfo[i].preview_url;
+      var songName = songInfo[i].name;
+      // console.log(songInfo);
 
-        // Prints artist info to the console
-        console.log("Song: " + songName);
-        console.log("Artist: " + artistName);
-        console.log("Album: " + albumName);
-        if (preview === null) {
-          console.log("Can't find a preview. Perhaps Youtube?");
-        } else {
-          console.log("Song Preview : " + preview);
-        };
-        console.log("-----------------------------------------");
+      // Prints artist info to the console
+      console.log("Song: " + songName);
+      console.log("Artist: " + artistName);
+      console.log("Album: " + albumName);
+      if (preview === null) {
+        console.log("Can't find a preview. Perhaps Youtube?");
+      } else {
+        console.log("Song Preview : " + preview);
       };
+      console.log("-----------------------------------------");
+    };
 
-    });
+  });
 };
 
-if (commands === "movie-this") {
-
+// Function for "movie-this"
+var movieThis = function() {
   // stores multiple user inputs
   var output = "";
   for (var i = 3; i < process.argv.length; i++) {
     output += process.argv[i] + "+";
   };
 
-  output = output.substring(0, output.length - 1);
+  var str = output.substring(0, output.length - 1);
 
-  var movieTitle = output ? output : "Mr.Nobody";
+  var movieTitle = str ? str : "Mr.Nobody";
 
   var queryUrl = "http://www.omdbapi.com/?t=" + movieTitle + "&y=&plot=short&apikey=trilogy";
 
@@ -124,8 +117,71 @@ if (commands === "movie-this") {
       console.log("Language : " + JSON.parse(body).Language);
       console.log("Plot : " + JSON.parse(body).Plot);
       console.log("Actors : " + JSON.parse(body).Actors);
+    };
+  });
+};
+
+var doWhatItSays = function() {
+  // fs is a core Node package for reading and writing files
+  var fs = require("fs");
+
+  // This block of code will read from the "movies.txt" file.
+  // It's important to include the "utf8" parameter or the code will provide stream data (garbage)
+  // The code will store the contents of the reading inside the variable "data"
+  fs.readFile("random.txt", "utf8", function(error, data) {
+
+    // If the code experiences any errors it will log the error to the console.
+    if (error) {
+      return console.log(error);
     }
+
+    // We will then print the contents of data
+    console.log("Running the following: " + data);
+
+    // Then split it by commas (to make it more readable)
+    var dataArr = data.split(",");
+    var command = dataArr[0];
+    var input = dataArr[1]
+
+    // We will then re-display the content as an array for later use.
+    console.log("Whats in random.txt: " + dataArr);
+    console.log("Command: " + command);
+    console.log("Input: " + input);
+
+    // Executes Function for "spotify-this-song"
+    if (command === "spotify-this-song") {
+        output = input;
+        spotify();
+    };
+    // Executes Function for "movie-this"
+    if (command === "movie-this") {
+        output = input;
+        movieThis();
+    };
+    // Executes Function for "my-tweets"
+    if (command === "my-tweets") {
+        my_tweets();
+    };
+
   });
 
+}
 
+// when tweets are requested from node
+if (commands === "my-tweets") {
+    my_tweets();
 };
+
+// Controls spotify request from user
+if (commands === "spotify-this-song") {
+    spotify();
+};
+
+
+if (commands === "movie-this") {
+    movieThis();
+};
+
+if(commands === "do-what-it-says") {
+    doWhatItSays();
+}
