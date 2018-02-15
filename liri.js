@@ -10,6 +10,7 @@ var request = require("request");
 // storing variables for node selectors
 var node = process.argv;
 var commands = node[2];
+var output = "";
 
 // Function for "my-tweets"
 var my_tweets = function() {
@@ -41,7 +42,7 @@ var my_tweets = function() {
 
 // Function for "spotify-this-song"
 var spotify = function() {
-  var output = "";
+  // var output = "";
   for (var i = 3; i < process.argv.length; i++) {
     output += process.argv[i] + " ";
   };
@@ -82,6 +83,7 @@ var spotify = function() {
         console.log("Song Preview : " + preview);
       };
       console.log("-----------------------------------------");
+      output = "";
     };
 
   });
@@ -90,7 +92,7 @@ var spotify = function() {
 // Function for "movie-this"
 var movieThis = function() {
   // stores multiple user inputs
-  var output = "";
+  // var output = "";
   for (var i = 3; i < process.argv.length; i++) {
     output += process.argv[i] + "+";
   };
@@ -117,6 +119,7 @@ var movieThis = function() {
       console.log("Language : " + JSON.parse(body).Language);
       console.log("Plot : " + JSON.parse(body).Plot);
       console.log("Actors : " + JSON.parse(body).Actors);
+      output = "";
     };
   });
 };
@@ -152,10 +155,10 @@ var doWhatItSays = function() {
     if (command === "spotify-this-song") {
         output = input;
         spotify();
+        output = "";
     };
     // Executes Function for "movie-this"
     if (command === "movie-this") {
-        output = input;
         movieThis();
     };
     // Executes Function for "my-tweets"
